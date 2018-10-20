@@ -3,6 +3,7 @@
 EXTENDS Naturals, Sequences
 
 CONSTANT PossibleResponses(_) \* Argument is a history
+CONSTANT IsInvocation(_) \* Argument is event
 CONSTANT Matches(_, _, _) \* Arguments are sequence, index, index
 
 \* Transpose a set of sets
@@ -19,7 +20,7 @@ Collect(S) ==
 \* Given a history, return the invocations that don't have an associated response
 InvocationsWithoutResponses(H) ==
     LET N == Len(H)
-        inds == {i \in 1..N : ~\E j \in i+1..N : Matches(H, i,j) }
+        inds == {i \in 1..N : IsInvocation(H[i]) /\ ~\E j \in i+1..N : Matches(H,i,j) }
     IN {H[i] : i \in inds }
 
 \* Return a set with all of the possible sequences that could

@@ -1,7 +1,18 @@
 ------------------------ MODULE TestLinearizability ------------------------
+EXTENDS Naturals 
+
 PossibleResponses(e) == {}
 
-Matches(H, i, j) == FALSE
+OpInvocations == {"E", "D"}
+OpResponse == "Ok"
+
+IsInvocation(e) == e.op \in OpInvocations
+
+Matches(H, i, j) ==
+    /\ H[i].proc = H[j].proc
+    /\ H[i].op \in OpInvocations
+    /\ H[j].op = OpResponse
+    /\ ~\E k \in (i+1)..(j-1) : H[k].proc = H[i].proc
 
 L == INSTANCE Linearizability
 
