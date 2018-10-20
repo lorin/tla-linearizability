@@ -1,6 +1,6 @@
 -------------------------- MODULE Linearizability --------------------------
 
-EXTENDS Naturals, Sequences
+EXTENDS Naturals, Sequences, FiniteSets
 
 CONSTANT PossibleResponses(_) \* Argument is a history
 CONSTANT IsInvocation(_) \* Argument is event
@@ -29,18 +29,44 @@ Extensions(H) ==
     LET R == { PossibleResponses(inv) : inv \in InvocationsWithoutResponses(H)}
     IN Collect(R)
 
-ExtendedHistories(H) == {H} \union {H \o ext: ext \in Extensions(H)}
+\* Given a set, return all sequences composed of that set
+ExtendedHistories(H) == {} \* TODO
+(*
+    LET S == Extensions(H)
+        exts == {s \in [1..Cardinality(S) -> S] : }
+{H} \union {H \o ext: ext \in Extensions(H)}
+*)
+
 
 \* Returns a set of functions on 1..N->1..N that represent permutations
 \* for reordering a sequence of events
-Orderings(N) == {} \* TODO
+Orderings(N) == LET S == 1..N
+                    Range(f) == { f[x] : x \in DOMAIN f }
+                    Onto(f) == DOMAIN f = Range(f)
+                IN {f \in [S->S] : Onto(f)}
 
-IsLegalSequentialHistory(S) == FALSE \* TODO
 
-RespectsPrecedenceOrdering(H, S) == FALSE \* TODO
+\* Given a set, return a sequence made of its elements
+RECURSIVE ToSeq(_)
+ToSeq(S) == IF S = {} THEN << >>
+            ELSE LET e == CHOOSE e \in S : TRUE
+                     T == S \ {e}
+                 IN Append(ToSeq(T), e)
 
 \* Composition
 f ** g == [x \in DOMAIN(g) |-> f[g[x]]]
+
+\* Given a set, return a set of sequences that are permutations 
+Perms(S) == LET fs == Orderings(Cardinality(S))
+                s == ToSeq(S)
+            IN {s**f: f \in fs}
+
+IsLegalSequentialHistory(S) == FALSE \* TODO
+
+\* Two histories H and H’ are equivalent if for every process P, H|P = H’|P.
+AreEquivalent(H1,H2) == FALSE \* TODO
+
+RespectsPrecedenceOrdering(H, S) == FALSE \* TODO
 
 
 (***************************************************************************
@@ -52,6 +78,9 @@ response events) to some history H’ such that:
 
 Ll: complete(H’) is equivalent to some legal sequential history S, and
 L2: <_H ⊆ <_S
+
+Two histories H and H’ are equivalent if for every process P, H|P = H’|P.
+
 ***************************************************************************)
 
 IsLinearizableHistory(H) == 
@@ -59,6 +88,7 @@ IsLinearizableHistory(H) ==
         /\ \E f \in Orderings(Len(Hp)) :
             LET S == Hp ** f
             IN /\ IsLegalSequentialHistory(S)
+               /\ AreEquivalent(S, Hp)
                /\ RespectsPrecedenceOrdering(H, S)
                 
         
