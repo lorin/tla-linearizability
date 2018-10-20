@@ -4,7 +4,16 @@ EXTENDS Sequences
 
 CONSTANT PossibleResponses(_)
 
-Collect(S) == {} \* TODO 
+\* Transpose a set of sets
+\* Collect({{"a","b"}, {"x","y"}}) => {{"x", "a"}, {"x", "b"}, {"a", "y"}, {"b", "y"}} 
+RECURSIVE Collect(_)
+
+Collect(S) == 
+    IF S = {} THEN {{}} ELSE
+    LET s == CHOOSE s \in S : TRUE
+        R == Collect(S \ {s})
+        er == {<<e,r>> \in s \X R : TRUE }
+    IN {{e} \union r : <<e,r>> \in er }
 
 InvocationsWithoutResponses(H) == {} \* TODO
 
