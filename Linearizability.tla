@@ -23,7 +23,7 @@ InvocationsWithoutResponses(H) ==
         inds == {i \in 1..N : IsInvocation(H[i]) /\ ~\E j \in i+1..N : Matches(H,i,j) }
     IN {H[i] : i \in inds }
 
-\* Return a set with all of the possible sequences that could
+\* Return a set with all of the possible sets of events that could
 \* by appended to H to extend it by completing operations
 Extensions(H) == 
     LET R == { PossibleResponses(inv) : inv \in InvocationsWithoutResponses(H)}

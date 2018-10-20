@@ -1,17 +1,22 @@
 ------------------------ MODULE TestLinearizability ------------------------
 EXTENDS Naturals 
 
-PossibleResponses(e) == {}
 
-OpInvocations == {"E", "D"}
-OpResponse == "Ok"
+opInvocations == {"E", "D"}
+opResponse == "Ok"
 
-IsInvocation(e) == e.op \in OpInvocations
+values == {"x", "y"} 
+
+PossibleResponses(e) ==
+    CASE e.op = "E" -> [op|->"Ok", proc|->e.proc]
+      [] e.op = "D" -> [op:{"Ok"}, proc:{e.proc}, val:values]
+
+IsInvocation(e) == e.op \in opInvocations
 
 Matches(H, i, j) ==
     /\ H[i].proc = H[j].proc
-    /\ H[i].op \in OpInvocations
-    /\ H[j].op = OpResponse
+    /\ H[i].op \in opInvocations
+    /\ H[j].op = opResponse
     /\ ~\E k \in (i+1)..(j-1) : H[k].proc = H[i].proc
 
 L == INSTANCE Linearizability
@@ -32,7 +37,14 @@ TestCollect == L!Collect({
 
 TestInvocationsWithoutResponse == L!InvocationsWithoutResponses(H3) = {[op|->"E", val|->"x", proc|->"A"]}
 
-Test == TestInvocationsWithoutResponse
+TestExtensions ==
+    LET H == <<[op|->"E", val|->"x", proc|->"A"], [op|->"D", proc|-> "B"]>>
+    IN L!Extensions(H) = {
+        {[op|->"Ok", proc|->"A"], [op|->"Ok", proc|->"B", val|->"x"]},
+        {[op|->"Ok", proc|->"A"], [op|->"Ok", proc|->"B", val|->"y"]}
+    }
+
+Test == TestExtensions
 
 \* The only possible extension for H3 is completing the enqueue
 ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
