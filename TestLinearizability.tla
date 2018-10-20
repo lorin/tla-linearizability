@@ -8,7 +8,7 @@ opResponse == "Ok"
 values == {"x", "y"} 
 
 PossibleResponses(e) ==
-    CASE e.op = "E" -> [op|->"Ok", proc|->e.proc]
+    CASE e.op = "E" -> {[op|->"Ok", proc|->e.proc]}
       [] e.op = "D" -> [op:{"Ok"}, proc:{e.proc}, val:values]
 
 IsInvocation(e) == e.op \in opInvocations

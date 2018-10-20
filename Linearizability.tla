@@ -27,7 +27,7 @@ InvocationsWithoutResponses(H) ==
 \* by appended to H to extend it by completing operations
 Extensions(H) == 
     LET R == { PossibleResponses(inv) : inv \in InvocationsWithoutResponses(H)}
-    IN {} \* TODO
+    IN Collect(R)
 
 ExtendedHistories(H) == {H} \union {H \o ext: ext \in Extensions(H)}
 
