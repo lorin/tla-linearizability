@@ -9,7 +9,7 @@ H3 == <<
 
 
 \* THe only possible extension for H3 is completing the enqueue
-Test == Extensions(H3) = {Append(H3, [op|->"Ok", proc|->"A"])}
+Test == Extensions(H3) = {[op|->"Ok", proc|->"A"]}
 
 
 =============================================================================

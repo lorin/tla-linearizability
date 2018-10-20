@@ -2,7 +2,12 @@
 
 EXTENDS Sequences
 
+
+\* Return a set with all of the possible sequences that could
+\* by appended to H to extend it by completing operations
 Extensions(H) == {} \* TODO
+
+ExtendedHistories(H) == {H} \union {H \o ext: ext \in Extensions(H)}
 
 \* Returns a set of functions on 1..N->1..N that represent permutations
 \* for reordering a sequence of events
@@ -28,7 +33,7 @@ L2: <_H ⊆ <_S
 ***************************************************************************)
 
 IsLinearizableHistory(H) == 
-    \E Hp \in Extensions(H) : 
+    \E Hp \in ExtendedHistories(H) : 
         /\ \E f \in Orderings(Len(Hp)) :
             LET S == Hp ** f
             IN /\ IsLegalSequentialHistory(S)
