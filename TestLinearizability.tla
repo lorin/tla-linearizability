@@ -1,18 +1,29 @@
 ------------------------ MODULE TestLinearizability ------------------------
-EXTENDS Linearizability
+PossibleResponses(e) == {}
+
+L == INSTANCE Linearizability
 
 H3 == <<
     [op|->"E", val|->"x", proc|->"A"],
     [op|->"D", proc|-> "B"],
     [op|->"Ok", val|->"x", proc|->"B"]
- >>
+>>
 
+TestCollect == L!Collect({
+    {[op|->"Ok", proc|->"A"]},
+    {[op|->"Ok", proc|->"B", val|->"x"], [op|->"Ok", proc|->"B", val|->"y"]}}) = 
+    {
+        {[op|->"Ok", proc|->"A"], [op|->"Ok", proc|->"B", val|->"x"]},
+        {[op|->"Ok", proc|->"A"], [op|->"Ok", proc|->"B", val|->"y"]}
+    }
 
-\* THe only possible extension for H3 is completing the enqueue
-Test == Extensions(H3) = {[op|->"Ok", proc|->"A"]}
+Test == TestCollect
+
+\* The only possible extension for H3 is completing the enqueue
+ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
 
 
 =============================================================================
 \* Modification History
-\* Last modified Sat Oct 20 13:46:00 PDT 2018 by lhochstein
+\* Last modified Sat Oct 20 14:11:55 PDT 2018 by lhochstein
 \* Created Sat Oct 20 13:43:05 PDT 2018 by lhochstein

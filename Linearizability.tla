@@ -2,10 +2,17 @@
 
 EXTENDS Sequences
 
+CONSTANT PossibleResponses(_)
+
+Collect(S) == {} \* TODO 
+
+InvocationsWithoutResponses(H) == {} \* TODO
 
 \* Return a set with all of the possible sequences that could
 \* by appended to H to extend it by completing operations
-Extensions(H) == {} \* TODO
+Extensions(H) == 
+    LET R == { PossibleResponses(inv) : inv \in InvocationsWithoutResponses(H)}
+    IN {} \* TODO
 
 ExtendedHistories(H) == {H} \union {H \o ext: ext \in Extensions(H)}
 
