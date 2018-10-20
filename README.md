@@ -11,16 +11,20 @@ Figures 1(a) and 1(c) are linearizable, and Figures 1(b) and 1(d) are not.
 
 ![Figure 1](fig1.png)
 
-Each interval represents an operation. There are two types of operations: {E, D}
-for enqueue and dequeue. There are two processes: {A, B}. There are three items that
-can be added to the queue: {x, y, z}.
+Each interval represents an operation. There are two types of operations: {E,
+D} for enqueue and dequeue. There are two processes: {A, B}. There are three
+items that can be added to the queue: {x, y, z}.
 
 
 ## Definition of linearizability
 
 From p469:
 
-> A history H is linearizable if it can be extended (by appending zero or more response events) to some history H’ such that:
-> Ll: complete(H’) is equivalent to some legal sequential history S, and
-> L2: <_H ⊆ <_S
+A history H is linearizable if it can be extended (by appending zero or more
+response events) to some history H’ such that:
+
+* L1: complete(H’) is equivalent to some legal sequential history S, and
+* L2: <<sub>H</sub> ⊆ <<sub>S</sub>
+
+
 
