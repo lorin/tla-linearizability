@@ -1,6 +1,8 @@
 ------------------------ MODULE TestLinearizability ------------------------
 PossibleResponses(e) == {}
 
+Matches(H, i, j) == FALSE
+
 L == INSTANCE Linearizability
 
 H3 == <<
@@ -17,7 +19,9 @@ TestCollect == L!Collect({
         {[op|->"Ok", proc|->"A"], [op|->"Ok", proc|->"B", val|->"y"]}
     }
 
-Test == TestCollect
+TestInvocationsWithoutResponse == L!InvocationsWithoutResponses(H3) = {[op|->"E", val|->"x", proc|->"A"]}
+
+Test == TestInvocationsWithoutResponse
 
 \* The only possible extension for H3 is completing the enqueue
 ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}

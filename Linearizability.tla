@@ -1,8 +1,9 @@
 -------------------------- MODULE Linearizability --------------------------
 
-EXTENDS Sequences
+EXTENDS Naturals, Sequences
 
-CONSTANT PossibleResponses(_)
+CONSTANT PossibleResponses(_) \* Argument is a history
+CONSTANT Matches(_, _, _) \* Arguments are sequence, index, index
 
 \* Transpose a set of sets
 \* Collect({{"a","b"}, {"x","y"}}) => {{"x", "a"}, {"x", "b"}, {"a", "y"}, {"b", "y"}} 
@@ -15,7 +16,11 @@ Collect(S) ==
         er == {<<e,r>> \in s \X R : TRUE }
     IN {{e} \union r : <<e,r>> \in er }
 
-InvocationsWithoutResponses(H) == {} \* TODO
+\* Given a history, return the invocations that don't have an associated response
+InvocationsWithoutResponses(H) ==
+    LET N == Len(H)
+        inds == {i \in 1..N : ~\E j \in i+1..N : Matches(H, i,j) }
+    IN {H[i] : i \in inds }
 
 \* Return a set with all of the possible sequences that could
 \* by appended to H to extend it by completing operations
