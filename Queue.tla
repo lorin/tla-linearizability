@@ -18,8 +18,6 @@ Deq(val, q, qp) == /\ q /= << >>
                    
 LOCAL SequenceOf(S) == UNION {[1..n -> S] : n \in Nat}
                    
-LOCAL Histories == SequenceOf([op:{"E", "D"}, val:Values])
-
 Init == /\ items = << >>
         /\ H = << >>
 
@@ -42,22 +40,10 @@ IsFIFO == LET FilterByOp(op) == SelectSeq(H, LAMBDA e: e.op = op)
 
 THEOREM Spec => IsFIFO
               
-RECURSIVE IsLegal(_, _)
-
-IsLegal(h, q) == \/ h = << >>
-                 \/ LET first == Head(h)
-                        rest == Tail(h)
-                    IN \/ /\ first.op = "E"
-                          /\ \E qp \in SequenceOf(Values) : /\ Enq(first.val, q, qp)
-                                                            /\ IsLegal(rest, qp)
-                       \/ /\ first.op = "D"
-                          /\ \E qp \in SequenceOf(Values) : /\ Deq(first.val, q, qp)
-                                                            /\ IsLegal(rest, qp)
-            
 RECURSIVE IsValidHelper(_, _)
 
 IsValidHelper(h, q) == \/ h = << >>
-                       /\ LET first == Head(h)
+                       \/ LET first == Head(h)
                               rest == Tail(h)
                           IN \/ /\ first.op = "E" 
                                 /\ IsValidHelper(rest, Append(q, first.val))
@@ -67,11 +53,10 @@ IsValidHelper(h, q) == \/ h = << >>
                                 /\ IsValidHelper(rest, Tail(q))
 
 
-IsValid(h) == /\ h \in Histories
-              /\ IsValidHelper(h, << >>)
+IsValid(h) == /\ IsValidHelper(h, << >>)
                  
 
 =============================================================================
 \* Modification History
-\* Last modified Thu Oct 18 23:06:17 PDT 2018 by lhochstein
+\* Last modified Sun Oct 21 11:19:29 PDT 2018 by lhochstein
 \* Created Fri Apr 20 23:43:41 PDT 2018 by lhochstein
