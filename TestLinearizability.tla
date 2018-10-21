@@ -1,30 +1,5 @@
 ------------------------ MODULE TestLinearizability ------------------------
-EXTENDS Naturals, Sequences
-
-
-opInvocations == {"E", "D"}
-opResponse == "Ok"
-
-values == {"x", "y"} 
-
-Processes == {"A", "B"}
-
-\* Process subhistory
-H|P == SelectSeq(H, LAMBDA e : e.proc = P)
-
-PossibleResponses(e) ==
-    CASE e.op = "E" -> {[op|->"Ok", proc|->e.proc]}
-      [] e.op = "D" -> [op:{"Ok"}, proc:{e.proc}, val:values]
-
-IsLegalSequentialHistory(H) == FALSE \* TODO, this will be defined elsewhere
-
-IsInvocation(e) == e.op \in opInvocations
-
-Matches(H, i, j) ==
-    /\ H[i].proc = H[j].proc
-    /\ H[i].op \in opInvocations
-    /\ H[j].op = opResponse
-    /\ ~\E k \in (i+1)..(j-1) : H[k].proc = H[i].proc
+EXTENDS Naturals, Sequences, LinQueue
 
 L == INSTANCE Linearizability
 
@@ -101,13 +76,12 @@ TestPrecedes ==
     IN /\ L!Precedes(H, e1, e2)
        /\ L!Precedes(H, e2, e3)
 
-
 TestOperations ==
     LET H == << 
         [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "Ok", proc |-> "A"],
         [op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "x", proc |-> "B"],
         [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "Ok", proc |-> "A"]>>
-    IN L!Operations(H) == { 
+    IN L!Operations(H) = { 
         <<[op |-> "E", val |-> "x", proc |-> "A"], [op |-> "Ok", proc |-> "A"]>>,
         <<[op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "x", proc |-> "B"]>>}
 
@@ -119,5 +93,5 @@ ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
 
 =============================================================================
 \* Modification History
-\* Last modified Sat Oct 20 22:32:55 PDT 2018 by lhochstein
+\* Last modified Sun Oct 21 10:18:05 PDT 2018 by lhochstein
 \* Created Sat Oct 20 13:43:05 PDT 2018 by lhochstein
