@@ -38,7 +38,7 @@ Figures 1(a) and 1(c) are linearizable, and Figures 1(b) and 1(d) are not.
 ![Figure 1](fig1.png)
 
 Each interval represents an operation. There are two types of operations: {E,
-D} for enqueue and dequeue. There are two processes: {A, B}. There are three
+D} for enqueue and dequeue. There are three processes: {A, B, C}. There are three
 items that can be added to the queue: {x, y, z}.
 
 
