@@ -56,4 +56,6 @@ L == INSTANCE Linearizability
 
 IsLin(H) == L!IsLinearizableHistory(H)
 
+Linearize(H) == L!Linearize(H)
+
 =============================================================================

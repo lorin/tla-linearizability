@@ -150,7 +150,22 @@ IsLinearizableHistory(H) ==
                /\ AreEquivalent(S, completeHp)
                /\ RespectsPrecedenceOrdering(H, S)
                 
+Linearize(H) ==
+    LET Hp == CHOOSE Hp \in ExtendedHistories(H) : 
+       LET completeHp == Complete(Hp)
+       IN \E f \in Orderings(Len(completeHp)) :
+            LET S == completeHp ** f
+            IN /\ IsLegalSequentialHistory(S)
+               /\ AreEquivalent(S, completeHp)
+               /\ RespectsPrecedenceOrdering(H, S)
+       completeHp == Complete(Hp)
+       f == CHOOSE f \in Orderings(Len(completeHp)) :
+            LET S == completeHp ** f
+            IN /\ IsLegalSequentialHistory(S)
+               /\ AreEquivalent(S, completeHp)
+               /\ RespectsPrecedenceOrdering(H, S)
+    IN Hp**f
 =============================================================================
 \* Modification History
-\* Last modified Sun Oct 21 08:25:36 PDT 2018 by lhochstein
+\* Last modified Sun Oct 21 15:33:20 PDT 2018 by lhochstein
 \* Created Sat Oct 20 09:56:44 PDT 2018 by lhochstein
