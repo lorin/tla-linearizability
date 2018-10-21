@@ -29,14 +29,6 @@ Extensions(H) ==
     LET R == { PossibleResponses(inv) : inv \in InvocationsWithoutResponses(H)}
     IN Collect(R)
 
-\* Given a set, return all sequences composed of that set
-ExtendedHistories(H) == {} \* TODO
-(*
-    LET S == Extensions(H)
-        exts == {s \in [1..Cardinality(S) -> S] : }
-{H} \union {H \o ext: ext \in Extensions(H)}
-*)
-
 
 \* Returns a set of functions on 1..N->1..N that represent permutations
 \* for reordering a sequence of events
@@ -60,6 +52,11 @@ f ** g == [x \in DOMAIN(g) |-> f[g[x]]]
 Perms(S) == LET fs == Orderings(Cardinality(S))
                 s == ToSeq(S)
             IN {s**f: f \in fs}
+
+\* Given a history, return the set of all extended histories
+ExtendedHistories(H) == 
+    LET exts == Perms(Extensions(H))
+    IN {H \o ext : ext \in exts} \union {H}
 
 IsLegalSequentialHistory(S) == FALSE \* TODO
 
