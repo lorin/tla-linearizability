@@ -9,7 +9,7 @@ There are several linearizable data stores with TLA+ specifications:
 
 * Lamport's book [Specifying Systems][specifying-systems] uses an example of a linearizable memory in
 Section 5.3.
-* The [Raft][raft] Consensus algorithm has linearizable semantics and has a
+* The [Raft][raft] Consensus algorithm supports linearizable semantics and has a
   [TLA+ specification][raft-tla].
 * [Azure Cosmos DB][cosmosdb] supports a consistency model with linearizable reads and has 
   [high-level TLA+ specifications][cosmosdb-tla].
@@ -21,8 +21,14 @@ Section 5.3.
 [cosmosdb]: http://cosmosdb.com/
 [cosmosdb-tla]: https://github.com/Azure/azure-cosmos-tla
 
-And yet, none of these models use the definition of linearizability outlined in
+However, none of these models use the definition of linearizability outlined in
 the original paper by Herlihy & Wing.
+
+As an exercise in becoming more familiar with both the definition of
+linearizability and with modeling in TLA+, I translated the definiton of
+linearizability from the original paper into a TLA+ model.
+
+**Note: This is a work-in-progress**.
 
 ## Figure 1
 
