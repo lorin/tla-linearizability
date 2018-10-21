@@ -43,9 +43,22 @@ TestExtensions ==
         {[op|->"Ok", proc|->"A"], [op|->"Ok", proc|->"B", val|->"x"]},
         {[op|->"Ok", proc|->"A"], [op|->"Ok", proc|->"B", val|->"y"]}
     }
+    
 
+TestExtendedHistories ==
+    LET H == <<[op|->"E", val|->"x", proc|->"A"], [op|->"D", proc|-> "B"]>>
+    IN L!ExtendedHistories(H) = {
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"]>>,
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", proc |-> "A"] >>,
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "x", proc |-> "B"] >>,
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "y", proc |-> "B"] >>,
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", proc |-> "A"], [op |-> "Ok", val |-> "x", proc |-> "B"] >>,
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", proc |-> "A"], [op |-> "Ok", val |-> "y", proc |-> "B"] >>,
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "x", proc |-> "B"], [op |-> "Ok", proc |-> "A"] >>,
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "y", proc |-> "B"], [op |-> "Ok", proc |-> "A"] >>
+}
 
-Test == TestExtensions
+Test == TestExtendedHistories
 
 \* The only possible extension for H3 is completing the enqueue
 ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
@@ -53,5 +66,5 @@ ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
 
 =============================================================================
 \* Modification History
-\* Last modified Sat Oct 20 14:11:55 PDT 2018 by lhochstein
+\* Last modified Sat Oct 20 21:07:36 PDT 2018 by lhochstein
 \* Created Sat Oct 20 13:43:05 PDT 2018 by lhochstein
