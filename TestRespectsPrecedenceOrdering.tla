@@ -1,8 +1,6 @@
 ------------------- MODULE TestRespectsPrecedenceOrdering -------------------
 EXTENDS LinQueue
 
-L == INSTANCE Linearizability
-
 TestNoChange ==
 \* Two overlapping 
     LET H == <<
@@ -57,5 +55,5 @@ TestMovingOverlapIsFine ==
 
 =============================================================================
 \* Modification History
-\* Last modified Sun Oct 21 10:25:30 PDT 2018 by lhochstein
+\* Last modified Sun Oct 21 10:55:45 PDT 2018 by lhochstein
 \* Created Sun Oct 21 10:20:03 PDT 2018 by lhochstein
