@@ -5,6 +5,7 @@ EXTENDS Naturals, Sequences, FiniteSets
 CONSTANT PossibleResponses(_) \* Argument is a history
 CONSTANT IsInvocation(_) \* Argument is event
 CONSTANT Matches(_, _, _) \* Arguments are sequence, index, index
+CONSTANT IsLegalSequentialHistory(_)
 
 \* Transpose a set of sets
 \* Collect({{"a","b"}, {"x","y"}}) => {{"x", "a"}, {"x", "b"}, {"a", "y"}, {"b", "y"}} 
@@ -59,19 +60,36 @@ ExtendedHistories(H) ==
         ExtHistory(s) == { H \o ext : ext \in Ps(s) }
     IN UNION({ExtHistory(s) : s \in Extensions(H)})
 
-(*
-ExtendedHistories(H) == 
-    LET extSets == Perms(Extensions(H))
-    IN {H \o ext : ext \in exts} \union {H}
-    *)
-
-IsLegalSequentialHistory(S) == FALSE \* TODO
 
 \* Two histories H and H’ are equivalent if for every process P, H|P = H’|P.
 AreEquivalent(H1,H2) == FALSE \* TODO
 
 RespectsPrecedenceOrdering(H, S) == FALSE \* TODO
 
+\* Pick a subsequence of H that matches the set of indices, inds
+Subseq(H, inds) ==
+    LET F[i \in 0..Len(H)] ==
+        IF i = 0 THEN << >>
+        ELSE IF i \in inds THEN Append(F[i-1], H[i])
+             ELSE F[i-1]
+    IN F[Len(H)]
+
+\* All subssequences of H
+\*
+\* A subsequence is a sequence that can be derived from another sequence by deleting
+\* some or no elements without changing the order of the remaining elements (Wikipedia).
+Subsequences(H) ==  {} \* TODO
+
+\* TRUE if history contains only invocations and matching responses
+OnlyInvAndMatchingResponses(H) == InvocationsWithoutResponses(H) = {} \* TODO
+
+\* If H is a history, complete(H) is the maximal subsequence of H consisting only
+\* of invocations and matching responses.
+Complete(H) ==
+    LET subseqs == Subsequences(H)
+    IN CHOOSE CH \in subseqs :
+        /\ OnlyInvAndMatchingResponses(CH) 
+        /\ \A s \in subseqs : OnlyInvAndMatchingResponses(s) => Len(s) <= Len(CH) \* maximal
 
 (***************************************************************************
 
@@ -85,6 +103,9 @@ L2: <_H ⊆ <_S
 
 Two histories H and H’ are equivalent if for every process P, H|P = H’|P.
 
+If H is a history, complete(H) is the maximal subsequence of H consisting only
+of invocations and matching responses.
+
 ***************************************************************************)
 
 IsLinearizableHistory(H) == 
@@ -92,7 +113,7 @@ IsLinearizableHistory(H) ==
         /\ \E f \in Orderings(Len(Hp)) :
             LET S == Hp ** f
             IN /\ IsLegalSequentialHistory(S)
-               /\ AreEquivalent(S, Hp)
+               /\ AreEquivalent(S, Complete(Hp))
                /\ RespectsPrecedenceOrdering(H, S)
                 
         

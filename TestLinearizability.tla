@@ -11,6 +11,8 @@ PossibleResponses(e) ==
     CASE e.op = "E" -> {[op|->"Ok", proc|->e.proc]}
       [] e.op = "D" -> [op:{"Ok"}, proc:{e.proc}, val:values]
 
+IsLegalSequentialHistory(H) == FALSE \* TODO, this will be defined elsewhere
+
 IsInvocation(e) == e.op \in opInvocations
 
 Matches(H, i, j) ==
@@ -58,7 +60,9 @@ TestExtendedHistories ==
     << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "y", proc |-> "B"], [op |-> "Ok", proc |-> "A"] >>
 }
 
-Test == TestExtendedHistories
+TestSubseq == L!Subseq(<<"a", "b", "c", "d", "e">>, {2,3,5}) = <<"b", "c", "e">>
+
+Test == TestSubseq
 
 \* The only possible extension for H3 is completing the enqueue
 ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
