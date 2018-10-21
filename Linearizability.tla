@@ -82,11 +82,16 @@ EventTimes(H, e) ==
 Precedes(H, e1, e2) == 
     \E t1 \in EventTimes(H, e1) : \E t2 \in EventTimes(H,e2) : t1[2] < t2[1]
 
-Operations(H) == {} \* TODO
+\* Operations are pairs (tuples) of events << inv, res >>
+Operations(H) == 
+    LET N == Len(H)
+        ts == {<<i,j>> \in (1..N) \X (1..N) : Matches(H,i,j)}
+    IN {<<H[t[1]], H[t[2]]>> : t \in ts}
 
+\* True if <_H ⊆ <_S
+\*
 \* A history H induces an irreflexive partial order < H on operations:
 \* e0 <_H e1 if res(e0) precedes inv(e1) in H
-\* <_H ⊆ <_S
 RespectsPrecedenceOrdering(H, S) == 
     LET LTH(x, y) == Precedes(H, x, y)
         LTS(x, y) == Precedes(S, x, y)
@@ -145,9 +150,7 @@ IsLinearizableHistory(H) ==
                /\ AreEquivalent(S, completeHp)
                /\ RespectsPrecedenceOrdering(H, S)
                 
-        
-
 =============================================================================
 \* Modification History
-\* Last modified Sun Oct 21 07:59:41 PDT 2018 by lhochstein
+\* Last modified Sun Oct 21 08:25:36 PDT 2018 by lhochstein
 \* Created Sat Oct 20 09:56:44 PDT 2018 by lhochstein

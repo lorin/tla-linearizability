@@ -101,7 +101,17 @@ TestPrecedes ==
     IN /\ L!Precedes(H, e1, e2)
        /\ L!Precedes(H, e2, e3)
 
-Test == TestPrecedes
+
+TestOperations ==
+    LET H == << 
+        [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "Ok", proc |-> "A"],
+        [op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "x", proc |-> "B"],
+        [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "Ok", proc |-> "A"]>>
+    IN L!Operations(H) == { 
+        <<[op |-> "E", val |-> "x", proc |-> "A"], [op |-> "Ok", proc |-> "A"]>>,
+        <<[op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "x", proc |-> "B"]>>}
+
+Test == TestOperations
 
 \* The only possible extension for H3 is completing the enqueue
 ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
