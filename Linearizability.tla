@@ -6,6 +6,8 @@ CONSTANT PossibleResponses(_) \* Argument is a history
 CONSTANT IsInvocation(_) \* Argument is event
 CONSTANT Matches(_, _, _) \* Arguments are sequence, index, index
 CONSTANT IsLegalSequentialHistory(_)
+CONSTANT _|_
+CONSTANT Processes
 
 \* Transpose a set of sets
 \* Collect({{"a","b"}, {"x","y"}}) => {{"x", "a"}, {"x", "b"}, {"a", "y"}, {"b", "y"}} 
@@ -61,8 +63,9 @@ ExtendedHistories(H) ==
     IN UNION({ExtHistory(s) : s \in Extensions(H)})
 
 
+
 \* Two histories H and H’ are equivalent if for every process P, H|P = H’|P.
-AreEquivalent(H1,H2) == FALSE \* TODO
+AreEquivalent(H1,H2) == \A p \in Processes : H1|p = H2|p
 
 RespectsPrecedenceOrdering(H, S) == FALSE \* TODO
 

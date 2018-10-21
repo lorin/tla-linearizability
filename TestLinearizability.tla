@@ -1,11 +1,16 @@
 ------------------------ MODULE TestLinearizability ------------------------
-EXTENDS Naturals 
+EXTENDS Naturals, Sequences
 
 
 opInvocations == {"E", "D"}
 opResponse == "Ok"
 
 values == {"x", "y"} 
+
+Processes == {"A", "B"}
+
+\* Process subhistory
+H|P == SelectSeq(H, LAMBDA e : e.proc = P)
 
 PossibleResponses(e) ==
     CASE e.op = "E" -> {[op|->"Ok", proc|->e.proc]}
@@ -75,6 +80,16 @@ TestSubsequences == L!Subsequences(<<"a", "b", "c">>) = {
 
 TestComplete == L!Complete(<< [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", proc |-> "A"] >>)
 
+TestAreEquivalentTrue == L!AreEquivalent(
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", proc |-> "A"], [op |-> "Ok", val |-> "x", proc |-> "B"] >>,
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "Ok", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "x", proc |-> "B"] >>
+)
+
+TestAreEquivalentFalse == L!AreEquivalent(
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", proc |-> "A"], [op |-> "Ok", val |-> "x", proc |-> "B"] >>,
+    << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "Ok", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "y", proc |-> "B"] >>
+)
+
 Test == TestSubsequences
 
 \* The only possible extension for H3 is completing the enqueue
@@ -83,5 +98,5 @@ ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
 
 =============================================================================
 \* Modification History
-\* Last modified Sat Oct 20 21:58:33 PDT 2018 by lhochstein
+\* Last modified Sat Oct 20 22:06:28 PDT 2018 by lhochstein
 \* Created Sat Oct 20 13:43:05 PDT 2018 by lhochstein
