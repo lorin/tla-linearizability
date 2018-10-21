@@ -55,8 +55,14 @@ Perms(S) == LET fs == Orderings(Cardinality(S))
 
 \* Given a history, return the set of all extended histories
 ExtendedHistories(H) == 
-    LET exts == Perms(Extensions(H))
+    LET ExtHistory(s) == { H \o ext : ext \in Perms(s) }
+    IN UNION({ExtHistory(s) : s \in Extensions(H)})
+
+(*
+ExtendedHistories(H) == 
+    LET extSets == Perms(Extensions(H))
     IN {H \o ext : ext \in exts} \union {H}
+    *)
 
 IsLegalSequentialHistory(S) == FALSE \* TODO
 

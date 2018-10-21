@@ -44,6 +44,7 @@ TestExtensions ==
         {[op|->"Ok", proc|->"A"], [op|->"Ok", proc|->"B", val|->"y"]}
     }
 
+
 Test == TestExtensions
 
 \* The only possible extension for H3 is completing the enqueue
