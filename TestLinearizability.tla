@@ -62,7 +62,18 @@ TestExtendedHistories ==
 
 TestSubseq == L!Subseq(<<"a", "b", "c", "d", "e">>, {2,3,5}) = <<"b", "c", "e">>
 
-Test == TestSubseq
+TestSubsequences == L!Subsequences(<<"a", "b", "c">>) = {
+ << >>,
+ <<"a">>,
+ <<"b">>,
+ <<"c">>,
+ <<"a","b">>,
+ <<"a","c">>,
+ <<"b","c">>,
+ <<"a","b","c">>
+}
+
+Test == TestSubsequences
 
 \* The only possible extension for H3 is completing the enqueue
 ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
@@ -70,5 +81,5 @@ ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
 
 =============================================================================
 \* Modification History
-\* Last modified Sat Oct 20 21:07:36 PDT 2018 by lhochstein
+\* Last modified Sat Oct 20 21:57:20 PDT 2018 by lhochstein
 \* Created Sat Oct 20 13:43:05 PDT 2018 by lhochstein

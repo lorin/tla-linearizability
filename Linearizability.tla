@@ -78,10 +78,10 @@ Subseq(H, inds) ==
 \*
 \* A subsequence is a sequence that can be derived from another sequence by deleting
 \* some or no elements without changing the order of the remaining elements (Wikipedia).
-Subsequences(H) ==  {} \* TODO
+Subsequences(H) ==  {Subseq(H,s) : s \in SUBSET(1..Len(H))} 
 
 \* TRUE if history contains only invocations and matching responses
-OnlyInvAndMatchingResponses(H) == InvocationsWithoutResponses(H) = {} \* TODO
+OnlyInvAndMatchingResponses(H) == InvocationsWithoutResponses(H) = {} 
 
 \* If H is a history, complete(H) is the maximal subsequence of H consisting only
 \* of invocations and matching responses.
