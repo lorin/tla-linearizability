@@ -90,7 +90,18 @@ TestAreEquivalentFalse == L!AreEquivalent(
     << [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "Ok", proc |-> "A"], [op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "y", proc |-> "B"] >>
 )
 
-Test == TestSubsequences
+TestPrecedes == 
+    LET H == << 
+        [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "Ok", proc |-> "A"],
+        [op |-> "D", proc |-> "B"], [op |-> "Ok", val |-> "x", proc |-> "B"],
+        [op |-> "E", val |-> "x", proc |-> "A"], [op |-> "Ok", proc |-> "A"]>>
+        e1 == <<H[1], H[2]>>
+        e2 == <<H[3], H[4]>>
+        e3 == <<H[5], H[6]>>
+    IN /\ L!Precedes(H, e1, e2)
+       /\ L!Precedes(H, e2, e3)
+
+Test == TestPrecedes
 
 \* The only possible extension for H3 is completing the enqueue
 ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
@@ -98,5 +109,5 @@ ExtH3 == L!Extensions(H3) = {[op|->"Ok", proc|->"A"]}
 
 =============================================================================
 \* Modification History
-\* Last modified Sat Oct 20 22:06:28 PDT 2018 by lhochstein
+\* Last modified Sat Oct 20 22:32:55 PDT 2018 by lhochstein
 \* Created Sat Oct 20 13:43:05 PDT 2018 by lhochstein

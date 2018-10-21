@@ -67,7 +67,32 @@ ExtendedHistories(H) ==
 \* Two histories H and H’ are equivalent if for every process P, H|P = H’|P.
 AreEquivalent(H1,H2) == \A p \in Processes : H1|p = H2|p
 
-RespectsPrecedenceOrdering(H, S) == FALSE \* TODO
+\* Set of times (indexes) when an op occurs in a history
+OpTimes(H, op) == { i \in 1..Len(H) : H[i] = op }
+
+\* Set of pairs of times (indexes) when an event (inv, res pair) pair occurs in a history
+EventTimes(H, e) == 
+    LET inv == e[1]
+        res == e[2]
+    IN {<<i,j>> \in OpTimes(H,inv) \X OpTimes(H,res) : Matches(H, i, j)}
+
+\* operation e1 precedes operation e2 if the response of e1 happens before
+\* the invocation of e2
+\* Operations are pairs (tuples) of events << inv, res >>
+Precedes(H, e1, e2) == 
+    \E t1 \in EventTimes(H, e1) : \E t2 \in EventTimes(H,e2) : t1[2] < t2[1]
+
+Operations(H) == {} \* TODO
+
+\* A history H induces an irreflexive partial order < H on operations:
+\* e0 <_H e1 if res(e0) precedes inv(e1) in H
+\* <_H ⊆ <_S
+RespectsPrecedenceOrdering(H, S) == 
+    LET LTH(x, y) == Precedes(H, x, y)
+        LTS(x, y) == Precedes(S, x, y)
+        ops == Operations(H) \union Operations(S)
+        Pairs(h, LT(_, _)) == {e \in ops \X ops: LT(e[1], e[2]) }
+    IN Pairs(H, LTH) \subseteq Pairs(S, LTS)
 
 \* Pick a subsequence of H that matches the set of indices, inds
 Subseq(H, inds) ==
@@ -113,15 +138,16 @@ of invocations and matching responses.
 
 IsLinearizableHistory(H) == 
     \E Hp \in ExtendedHistories(H) : 
-        /\ \E f \in Orderings(Len(Hp)) :
-            LET S == Hp ** f
+       LET completeHp == Complete(Hp)
+       IN \E f \in Orderings(Len(completeHp)) :
+            LET S == completeHp ** f
             IN /\ IsLegalSequentialHistory(S)
-               /\ AreEquivalent(S, Complete(Hp))
+               /\ AreEquivalent(S, completeHp)
                /\ RespectsPrecedenceOrdering(H, S)
                 
         
 
 =============================================================================
 \* Modification History
-\* Last modified Sat Oct 20 13:38:18 PDT 2018 by lhochstein
+\* Last modified Sun Oct 21 07:59:41 PDT 2018 by lhochstein
 \* Created Sat Oct 20 09:56:44 PDT 2018 by lhochstein
