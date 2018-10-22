@@ -44,7 +44,14 @@ items that can be added to the queue: {x, y, z}.
 
 ## Definition of linearizability
 
-From p469:
+The definitions are on p469 of the paper.
+
+### Linearizable object
+
+A *linearizable object* is one whose concurrent histories are linearizable with
+respect to some sequential specification.
+
+### Linearizable history
 
 A history H is linearizable if it can be extended (by appending zero or more
 response events) to some history H’ such that:
