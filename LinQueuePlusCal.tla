@@ -9,70 +9,62 @@ f ** g == [x \in DOMAIN(g) |-> f[g[x]]]
 --algorithm FindLinearization
 variables
     linearizable = FALSE,
-    Hp, completeHp, f, S;
+    completeHp, f, S;
 
 begin
 
-Hp: with x \in L!ExtendedHistories(H) do
-    Hp := x;
+A: with Hp \in L!ExtendedHistories(H) do
+    completeHp := L!Complete(Hp);
     end with;
-CHp: completeHp := L!Complete(Hp);
-Ord: with x \in L!Orderings(Len(completeHp)) do
+B: with x \in L!Orderings(Len(completeHp)) do
     f := x;
     end with;
-Sq: S := completeHp ** f;
-Chk: linearizable := /\ L!IsSequential(S)
-                     /\ IsLegal(S)
-                     /\ L!AreEquivalent(S, completeHp)
-                     /\ L!RespectsPrecedenceOrdering(H, S)
+C: S := completeHp ** f;
+D: linearizable := /\ L!IsSequential(S)
+                   /\ IsLegal(S)
+                   /\ L!AreEquivalent(S, completeHp)
+                   /\ L!RespectsPrecedenceOrdering(H, S)
 end algorithm
 *)
 \* BEGIN TRANSLATION
-\* Label Hp at line 16 col 5 changed to Hp_
 CONSTANT defaultInitValue
-VARIABLES linearizable, Hp, completeHp, f, S, pc
+VARIABLES linearizable, completeHp, f, S, pc
 
-vars == << linearizable, Hp, completeHp, f, S, pc >>
+vars == << linearizable, completeHp, f, S, pc >>
 
 Init == (* Global variables *)
         /\ linearizable = FALSE
-        /\ Hp = defaultInitValue
         /\ completeHp = defaultInitValue
         /\ f = defaultInitValue
         /\ S = defaultInitValue
-        /\ pc = "Hp_"
+        /\ pc = "A"
 
-Hp_ == /\ pc = "Hp_"
-       /\ \E x \in L!ExtendedHistories(H):
-            Hp' = x
-       /\ pc' = "CHp"
-       /\ UNCHANGED << linearizable, completeHp, f, S >>
+A == /\ pc = "A"
+     /\ \E Hp \in L!ExtendedHistories(H):
+          completeHp' = L!Complete(Hp)
+     /\ pc' = "B"
+     /\ UNCHANGED << linearizable, f, S >>
 
-CHp == /\ pc = "CHp"
-       /\ completeHp' = L!Complete(Hp)
-       /\ pc' = "Ord"
-       /\ UNCHANGED << linearizable, Hp, f, S >>
+B == /\ pc = "B"
+     /\ \E x \in L!Orderings(Len(completeHp)):
+          f' = x
+     /\ pc' = "C"
+     /\ UNCHANGED << linearizable, completeHp, S >>
 
-Ord == /\ pc = "Ord"
-       /\ \E x \in L!Orderings(Len(completeHp)):
-            f' = x
-       /\ pc' = "Sq"
-       /\ UNCHANGED << linearizable, Hp, completeHp, S >>
+C == /\ pc = "C"
+     /\ S' = completeHp ** f
+     /\ pc' = "D"
+     /\ UNCHANGED << linearizable, completeHp, f >>
 
-Sq == /\ pc = "Sq"
-      /\ S' = completeHp ** f
-      /\ pc' = "Chk"
-      /\ UNCHANGED << linearizable, Hp, completeHp, f >>
+D == /\ pc = "D"
+     /\ linearizable' = (/\ L!IsSequential(S)
+                         /\ IsLegal(S)
+                         /\ L!AreEquivalent(S, completeHp)
+                         /\ L!RespectsPrecedenceOrdering(H, S))
+     /\ pc' = "Done"
+     /\ UNCHANGED << completeHp, f, S >>
 
-Chk == /\ pc = "Chk"
-       /\ linearizable' = (/\ L!IsSequential(S)
-                           /\ IsLegal(S)
-                           /\ L!AreEquivalent(S, completeHp)
-                           /\ L!RespectsPrecedenceOrdering(H, S))
-       /\ pc' = "Done"
-       /\ UNCHANGED << Hp, completeHp, f, S >>
-
-Next == Hp_ \/ CHp \/ Ord \/ Sq \/ Chk
+Next == A \/ B \/ C \/ D
            \/ (* Disjunct to prevent deadlock on termination *)
               (pc = "Done" /\ UNCHANGED vars)
 
