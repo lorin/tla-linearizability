@@ -15,10 +15,10 @@ begin
 
 A: with Hp \in L!ExtendedHistories(H) do
     completeHp := L!Complete(Hp);
-    end with;
+   end with;
 B: with x \in L!Orderings(Len(completeHp)) do
     f := x;
-    end with;
+   end with;
 C: S := completeHp ** f;
 D: linearizable := /\ L!IsSequential(S)
                    /\ IsLegal(S)
