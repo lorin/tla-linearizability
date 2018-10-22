@@ -39,17 +39,15 @@ LegalQueue(h, q) == \/ h = << >>
 
 IsLegalQueueHistory(h) == LegalQueue(h, << >>)
 
-IsLegalSequentialHistory(H) == 
+\* Given a sequential history H, true if it represents a legal queue history
+IsLegal(H) == 
     LET RECURSIVE Helper(_, _)
-        Helper(h, s) == 
-            CASE h = << >> -> IsLegalQueueHistory(s)
-              [] Len(h) = 1 -> FALSE
-              [] Matches(h,1,2) -> LET hr == Tail(Tail(h))
-                                       inv == h[1]
-                                       res == h[2]
-                                       e == [op|->inv.op, val|-> IF inv.op = "E" THEN inv.val ELSE res.val]
-                                   IN Helper(hr, Append(s, e))
-              [] OTHER -> FALSE
+        Helper(h, s) == IF h = << >> THEN IsLegalQueueHistory(s)
+                        ELSE LET hr == Tail(Tail(h))
+                                 inv == h[1]
+                                 res == h[2]
+                                 e == [op|->inv.op, val|-> IF inv.op = "E" THEN inv.val ELSE res.val]
+                             IN Helper(hr, Append(s, e))
     IN Helper(H, <<>>)
 
 L == INSTANCE Linearizability

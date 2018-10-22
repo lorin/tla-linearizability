@@ -5,7 +5,7 @@ EXTENDS Naturals, Sequences, FiniteSets
 CONSTANT PossibleResponses(_) \* Argument is a history
 CONSTANT IsInvocation(_) \* Argument is event
 CONSTANT Matches(_, _, _) \* Arguments are sequence, index, index
-CONSTANT IsLegalSequentialHistory(_)
+CONSTANT IsLegal(_)
 CONSTANT _|_
 CONSTANT Processes
 
@@ -124,6 +124,14 @@ Complete(H) ==
         /\ OnlyInvAndMatchingResponses(CH) 
         /\ \A s \in subseqs : OnlyInvAndMatchingResponses(s) => Len(s) <= Len(CH) \* maximal
 
+\* Predicate to check if a history is sequential
+RECURSIVE IsSequential(_)
+IsSequential(H) ==
+    CASE H = << >> -> TRUE
+      [] Tail(H) = << >> -> FALSE
+      [] Matches(H,1,2) -> IsSequential(Tail(Tail(H)))
+      [] OTHER -> FALSE
+
 (***************************************************************************
 
 Herlihy & Wing 1990, p469:
@@ -146,7 +154,8 @@ IsLinearizableHistory(H) ==
        LET completeHp == Complete(Hp)
        IN \E f \in Orderings(Len(completeHp)) :
             LET S == completeHp ** f
-            IN /\ IsLegalSequentialHistory(S)
+            IN /\ IsSequential(S)
+               /\ IsLegal(S)
                /\ AreEquivalent(S, completeHp)
                /\ RespectsPrecedenceOrdering(H, S)
                 
@@ -155,17 +164,19 @@ Linearize(H) ==
        LET completeHp == Complete(Hp)
        IN \E f \in Orderings(Len(completeHp)) :
             LET S == completeHp ** f
-            IN /\ IsLegalSequentialHistory(S)
+            IN /\ IsSequential(S)
+               /\ IsLegal(S)
                /\ AreEquivalent(S, completeHp)
                /\ RespectsPrecedenceOrdering(H, S)
        completeHp == Complete(Hp)
        f == CHOOSE f \in Orderings(Len(completeHp)) :
             LET S == completeHp ** f
-            IN /\ IsLegalSequentialHistory(S)
+            IN /\ IsSequential(S)
+               /\ IsLegal(S)
                /\ AreEquivalent(S, completeHp)
                /\ RespectsPrecedenceOrdering(H, S)
     IN Hp**f
 =============================================================================
 \* Modification History
-\* Last modified Sun Oct 21 15:33:20 PDT 2018 by lhochstein
+\* Last modified Sun Oct 21 18:31:15 PDT 2018 by lhochstein
 \* Created Sat Oct 20 09:56:44 PDT 2018 by lhochstein
