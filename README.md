@@ -5,7 +5,24 @@ The [Herlihy & Wing 1990](http://dx.doi.org/10.1145/78969.78972) paper entitled
 introduced *linearizability* as a correctness condition for reasoning about the
 behavior of concurrent data structures.
 
-There are several linearizable data stores with TLA+ specifications:
+Peter Bailis's blog entry [Linearizability versus Serializability][bailis-lin]
+has a good definition:
+
+> Linearizability is a guarantee about single operations on single objects. It
+> provides a real-time (i.e., wall-clock) guarantee on the behavior of a set of
+> single operations (often reads and writes) on a single object (e.g.,
+> distributed register or data item).
+
+> In plain English, under linearizability, writes should appear to be
+> instantaneous. Imprecisely, once a write completes, all later reads (where
+> “later” is defined by wall-clock start time) should return the value of that
+> write or the value of a later write. Once a read returns a particular value,
+> all later reads should return that value or the value of a later write.
+
+[bailis-lin]: http://www.bailis.org/blog/linearizability-versus-serializability/
+
+There are several linearizable data stores whose behavior has been specified
+with [TLA+]:
 
 * Lamport's book [Specifying Systems][specifying-systems] uses an example of a linearizable memory in
 Section 5.3.
@@ -15,6 +32,7 @@ Section 5.3.
   [high-level TLA+ specifications][cosmosdb-tla].
   
 
+[TLA+]: https://lamport.azurewebsites.net/tla/tla.html
 [specifying-systems]: https://lamport.azurewebsites.net/tla/book.html
 [raft]: https://raft.github.io/
 [raft-tla]: https://github.com/ongardie/raft.tla
@@ -24,11 +42,21 @@ Section 5.3.
 However, none of these models use the definition of linearizability outlined in
 the original paper by Herlihy & Wing.
 
-As an exercise in becoming more familiar with both the definition of
-linearizability and with modeling in TLA+, I translated the definiton of
-linearizability from the original paper into a TLA+ model.
+Indeed, the definition in the original paper is awkward to use with TLC (the
+TLA+ model checker), because of state space explosion. However, as an exercise
+in becoming more familiar with both the definition of linearizability and with
+modeling in TLA+, this repository caontains a definiton of linearizability from the
+original paper into a TLA+ model. 
 
-**Note: This is a work-in-progress**.
+## Files in this repository
+
+* [Linearizability.tla](Linearizability.tla) contains a definition of
+  linearizability. In particular, the `IsLinearizableHistory` operator
+  returns true if an event history is linearizable.
+* [LinQueue.tla](LinQueue.tla) instantiates the Linearizability module for
+  a queue (FIFO) object. It contains an `IsLin` operator that returns true
+  if an event history for a queue is linearizable.
+* [LinQueuePlusCal.tla](LinQueuePlusCal.tla) is a PlusCal version. 
 
 ## Figure 1
 
