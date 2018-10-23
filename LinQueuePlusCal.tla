@@ -11,17 +11,17 @@ variables
 
 begin
 
-A: with Hp \in L!ExtendedHistories(H) do
-    completeHp := L!Complete(Hp);
-   end with;
-B: with x \in L!Orderings(Len(completeHp)) do
-    f := x;
-   end with;
-C: S := completeHp ** f;
-D: linearizable := /\ L!IsSequential(S)
-                   /\ IsLegal(S)
-                   /\ L!AreEquivalent(S, completeHp)
-                   /\ L!RespectsPrecedenceOrdering(H, S)
+with Hp \in L!ExtendedHistories(H) do
+ completeHp := L!Complete(Hp);
+end with;
+with x \in L!Orderings(Len(completeHp)) do
+ f := x;
+end with;
+S := completeHp ** f;
+linearizable := /\ L!IsSequential(S)
+                /\ IsLegal(S)
+                /\ L!AreEquivalent(S, completeHp)
+                /\ L!RespectsPrecedenceOrdering(H, S)
 end algorithm
 *)
 \* BEGIN TRANSLATION
@@ -35,34 +35,21 @@ Init == (* Global variables *)
         /\ completeHp = defaultInitValue
         /\ f = defaultInitValue
         /\ S = defaultInitValue
-        /\ pc = "A"
+        /\ pc = "Lbl_1"
 
-A == /\ pc = "A"
-     /\ \E Hp \in L!ExtendedHistories(H):
-          completeHp' = L!Complete(Hp)
-     /\ pc' = "B"
-     /\ UNCHANGED << linearizable, f, S >>
+Lbl_1 == /\ pc = "Lbl_1"
+         /\ \E Hp \in L!ExtendedHistories(H):
+              completeHp' = L!Complete(Hp)
+         /\ \E x \in L!Orderings(Len(completeHp')):
+              f' = x
+         /\ S' = completeHp' ** f'
+         /\ linearizable' = (/\ L!IsSequential(S')
+                             /\ IsLegal(S')
+                             /\ L!AreEquivalent(S', completeHp')
+                             /\ L!RespectsPrecedenceOrdering(H, S'))
+         /\ pc' = "Done"
 
-B == /\ pc = "B"
-     /\ \E x \in L!Orderings(Len(completeHp)):
-          f' = x
-     /\ pc' = "C"
-     /\ UNCHANGED << linearizable, completeHp, S >>
-
-C == /\ pc = "C"
-     /\ S' = completeHp ** f
-     /\ pc' = "D"
-     /\ UNCHANGED << linearizable, completeHp, f >>
-
-D == /\ pc = "D"
-     /\ linearizable' = (/\ L!IsSequential(S)
-                         /\ IsLegal(S)
-                         /\ L!AreEquivalent(S, completeHp)
-                         /\ L!RespectsPrecedenceOrdering(H, S))
-     /\ pc' = "Done"
-     /\ UNCHANGED << completeHp, f, S >>
-
-Next == A \/ B \/ C \/ D
+Next == Lbl_1
            \/ (* Disjunct to prevent deadlock on termination *)
               (pc = "Done" /\ UNCHANGED vars)
 
@@ -76,5 +63,5 @@ Termination == <>(pc = "Done")
 
 =============================================================================
 \* Modification History
-\* Last modified Mon Oct 22 19:33:18 PDT 2018 by lhochstein
+\* Last modified Mon Oct 22 19:40:16 PDT 2018 by lhochstein
 \* Created Sun Oct 21 19:33:05 PDT 2018 by lhochstein
