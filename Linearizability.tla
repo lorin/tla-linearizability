@@ -1,6 +1,6 @@
 -------------------------- MODULE Linearizability --------------------------
 
-EXTENDS Naturals, Sequences, FiniteSets
+EXTENDS Naturals, Sequences, Utilities
 
 CONSTANT PossibleResponses(_) \* Argument is a history
 CONSTANT IsInvocation(_) \* Argument is event
@@ -33,28 +33,6 @@ Extensions(H) ==
     IN Collect(R)
 
 
-\* Returns a set of functions on 1..N->1..N that represent permutations
-\* for reordering a sequence of events
-Orderings(N) == LET S == 1..N
-                    Range(f) == { f[x] : x \in DOMAIN f }
-                    Onto(f) == DOMAIN f = Range(f)
-                IN {f \in [S->S] : Onto(f)}
-
-
-\* Given a set, return a sequence made of its elements
-RECURSIVE ToSeq(_)
-ToSeq(S) == IF S = {} THEN << >>
-            ELSE LET e == CHOOSE e \in S : TRUE
-                     T == S \ {e}
-                 IN Append(ToSeq(T), e)
-
-\* Composition
-f ** g == [x \in DOMAIN(g) |-> f[g[x]]]
-
-\* Given a set, return a set of sequences that are permutations 
-Perms(S) == LET fs == Orderings(Cardinality(S))
-                s == ToSeq(S)
-            IN {s**f: f \in fs}
 
 \* Given a history, return the set of all extended histories
 ExtendedHistories(H) == 
@@ -178,5 +156,5 @@ Linearize(H) ==
     IN Hp**f
 =============================================================================
 \* Modification History
-\* Last modified Sun Oct 21 18:31:15 PDT 2018 by lhochstein
+\* Last modified Mon Oct 22 19:31:33 PDT 2018 by lhochstein
 \* Created Sat Oct 20 09:56:44 PDT 2018 by lhochstein

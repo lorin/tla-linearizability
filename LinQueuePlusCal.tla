@@ -1,9 +1,7 @@
 -------------------------- MODULE LinQueuePlusCal --------------------------
-EXTENDS LinQueue
+EXTENDS LinQueue, Utilities
 
 CONSTANT H
-
-f ** g == [x \in DOMAIN(g) |-> f[g[x]]]
 
 (*
 --algorithm FindLinearization
@@ -78,5 +76,5 @@ Termination == <>(pc = "Done")
 
 =============================================================================
 \* Modification History
-\* Last modified Sun Oct 21 19:50:03 PDT 2018 by lhochstein
+\* Last modified Mon Oct 22 19:33:18 PDT 2018 by lhochstein
 \* Created Sun Oct 21 19:33:05 PDT 2018 by lhochstein
