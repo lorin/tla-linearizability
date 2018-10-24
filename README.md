@@ -1,5 +1,8 @@
 # Reading the Herlihy & Wing Linearizability paper with TLA+
 
+This repository contains a TLA+ model for checking if an object history is
+linearizable. 
+
 The [Herlihy & Wing 1990](http://dx.doi.org/10.1145/78969.78972) paper entitled
 *Linearizability: a correctness condition for concurrent objects*
 introduced *linearizability* as a correctness condition for reasoning about the
@@ -43,10 +46,12 @@ However, none of these models use the definition of linearizability outlined in
 the original paper by Herlihy & Wing.
 
 Indeed, the definition in the original paper is awkward to use with TLC (the
-TLA+ model checker), because of state space explosion. However, as an exercise
-in becoming more familiar with both the definition of linearizability and with
-modeling in TLA+, this repository caontains a definiton of linearizability from the
-original paper into a TLA+ model. 
+TLA+ model checker), because it involves reordering of event histories, which
+leads to state space explosion.
+
+However, I found it useful to work directly with the definition of
+linearizability as an exercise for practicing with TLA+, as well as to gain a
+better understanding of how linearizability is defined.
 
 ## Files in this repository
 
@@ -140,12 +145,11 @@ run the model checker. The variable `S` contains the linearization:
 >>
 ```
 
-## Translating definitions into TLA+
+## Some excerpts of the model
 
-Here are some of excerpts of the TLA+ model. I tried to make the TLA+
-representation as close as possible to how the definitions were written in the
-paper, rather than trying to optimize for reducing the state space of the TLC model
-checker.
+I endeavored to make the TLA+ representation as close as possible to how the
+definitions were written in the paper, rather than trying to optimize for
+reducing the state space of the TLC model checker.
 
 ### Linearizable history
 
@@ -158,7 +162,7 @@ response events) to some history H’ such that:
 * L2: <<sub>H</sub> ⊆ <<sub>S</sub>
 
 
-Here's how we model this in TLA+, going top-down:
+Here's how I modeled this in TLA+:
 
 ```
 IsLinearizableHistory(H) == 
@@ -171,7 +175,6 @@ IsLinearizableHistory(H) ==
                /\ AreEquivalent(S, completeHp)  \* L1
                /\ RespectsPrecedenceOrdering(H, S) \* L2
 ```
-
 
 ### complete(H)
 
@@ -244,4 +247,3 @@ IsLegal(H) ==
                              IN Helper(hr, Append(s, e))
     IN Helper(H, <<>>)
 ```
-
