@@ -30,10 +30,12 @@ with [TLA+]:
 * Lamport's book [Specifying Systems][specifying-systems] uses an example of a linearizable memory in
 Section 5.3.
 * The [Raft][raft] Consensus algorithm supports linearizable semantics and has a
-  [TLA+ specification][raft-tla].
+  [TLA+ specification][raft-tla] written by [Diego Ongaro].
 * [Azure Cosmos DB][cosmosdb] supports a consistency model with linearizable reads and has 
-  [high-level TLA+ specifications][cosmosdb-tla].
+  [high-level TLA+ specifications][cosmosdb-tla] written by [Murat Demirbas].
   
+[Diego Ongaro]: https://ongardie.net/diego/
+[Murat Demirbas]: http://muratbuffalo.blogspot.com/
 
 [TLA+]: https://lamport.azurewebsites.net/tla/tla.html
 [specifying-systems]: https://lamport.azurewebsites.net/tla/book.html
