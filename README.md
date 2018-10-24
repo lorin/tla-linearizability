@@ -136,6 +136,8 @@ run the model checker. The variable `S` contains the linearization:
 
 ![H3 linearization](h3.png)
 
+Here's the value for `S`:
+
 ```
 <<
     [op|->"E", val|->"x", proc|->"A"],
