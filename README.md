@@ -54,7 +54,7 @@ original paper into a TLA+ model.
   linearizability. In particular, the `IsLinearizableHistory` operator
   returns true if an event history is linearizable.
 * [LinQueue.tla](LinQueue.tla) instantiates the Linearizability module for
-  a queue (FIFO) object. It contains an `IsLin` operator that returns true
+  a queue (FIFO) object. It contains an `IsLinearizableHistory` operator that returns true
   if an event history for a queue is linearizable.
 * [LinQueuePlusCal.tla](LinQueuePlusCal.tla) is a PlusCal version. If a
   history is linearizable, using TLC with this module makes it easy to see
@@ -79,7 +79,64 @@ Each interval represents an operation. There are two types of operations: {E,
 D} for enqueue and dequeue. There are three processes: {A, B, C}. There are three
 items that can be added to the queue: {x, y, z}.
 
+Here's how I modeled these four histories in TLA+:
+
+```
+H1 == <<
+        [op|->"E", val|->"x", proc|->"A"],
+        [op|->"E", val|->"y", proc|->"B"],
+        [op|->"Ok", proc|->"B"],
+        [op|->"Ok", proc|->"A"],
+        [op|->"D",  proc|->"B"],
+        [op|->"Ok", val|->"x", proc|->"B"],
+        [op|->"D",  proc|->"A"],
+        [op|->"Ok", val|->"y", proc|->"A"],
+        [op|->"E", val|->"z", proc|->"A"]>>
+
+H2 == <<
+        [op|->"E", val|->"x", proc|->"A"],
+        [op|->"Ok", proc|->"A"],
+        [op|->"E", val|->"y", proc|->"B"],
+        [op|->"D",  proc|->"A"],
+        [op|->"Ok", proc|->"B"],
+        [op|->"Ok", val|->"y", proc|->"A"]
+>>
+
+H3 == <<
+        [op|->"E", val|->"x", proc|->"A"],
+        [op|->"D", proc|-> "B"],
+        [op|->"Ok", val|->"x", proc|->"B"]>>
+
+
+H4 == <<
+        [op|->"E", val|->"x", proc|->"A"],
+        [op|->"E", val|->"y", proc|->"B"],
+        [op|->"Ok", proc|->"A"],
+        [op|->"Ok", proc|->"B"],
+        [op|->"D", proc|-> "A"],
+        [op|->"D", proc|-> "C"],
+        [op|->"Ok", val|->"y", proc|->"A"],
+        [op|->"Ok", val|->"y", proc|->"C"]
+>>
+```
+
+We can use the `IsLinearizableHistory` operator from LinQueue.tla to verify that
+H2 is not linearizable.
+
+![Evaluating IsLinearizable(H2)](h2.png)
+
+For H3, we can use the `FindLinearization` algorithm for LinQueuePlusCal to
+find a linearization. We specify `linearizable = FALSE` as the invariant and
+run the model checker. The variable `S` contains the linearization:
+
+![H3 linearization](h3.png)
+
 ## Translating definitions into TLA+
+
+Here are some of excerpts of the TLA+ model. I tried to make the TLA+
+representation as close as possible to how the definitions were written in the
+paper, rather than trying to optimize for reducing the state space of the TLC model
+checker.
 
 ### Linearizable history
 
@@ -142,3 +199,40 @@ IsSequential(H) ==
        /\ \A i \in 1..Len(H) : IsInvocation(H[i]) => (IsLastInvocation(H,i) \/ Matches(H, i, i+1))
        /\ \A i \in 1..Len(H) : IsResponse(H[i]) => Matches(H,i-1,i)
 ```
+
+### Legal sequential history
+
+The specificiation for a legal sequential history varies based on the kind of
+object whose behavior you are trying to model. The paper uses a queue (FIFO) as the example object being
+modeled.
+
+Most of the work is done by the recursive `LegalQueue` function.
+
+```
+RECURSIVE LegalQueue(_, _)
+
+\* Check if a history h is legal given an initial queue state q
+LegalQueue(h, q) == \/ h = << >>
+                    \/ LET first == Head(h)
+                           rest == Tail(h)
+                       IN \/ /\ first.op = "E" 
+                             /\ LegalQueue(rest, Append(q, first.val))
+                          \/ /\ first.op = "D"
+                             /\ Len(q)>0
+                             /\ first.val = Head(q)
+                             /\ LegalQueue(rest, Tail(q))
+
+IsLegalQueueHistory(h) == LegalQueue(h, << >>)
+
+\* Given a sequential history H, true if it represents a legal queue history
+IsLegal(H) == 
+    LET RECURSIVE Helper(_, _)
+        Helper(h, s) == IF h = << >> THEN IsLegalQueueHistory(s)
+                        ELSE LET hr == Tail(Tail(h))
+                                 inv == h[1]
+                                 res == h[2]
+                                 e == [op|->inv.op, val|-> IF inv.op = "E" THEN inv.val ELSE res.val]
+                             IN Helper(hr, Append(s, e))
+    IN Helper(H, <<>>)
+```
+

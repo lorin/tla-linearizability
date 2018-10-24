@@ -53,7 +53,8 @@ IsLegal(H) ==
 
 L == INSTANCE Linearizability
 
-IsLin(H) == L!IsLinearizableHistory(H)
+IsLinearizableHistory(H) == L!IsLinearizableHistory(H)
+IsLin(H) == IsLinearizableHistory(H) \* Shorter alias
 
 Linearize(H) == L!Linearize(H)
 
