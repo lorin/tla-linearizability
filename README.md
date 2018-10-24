@@ -24,7 +24,7 @@ has a good definition:
 
 [bailis-lin]: http://www.bailis.org/blog/linearizability-versus-serializability/
 
-There are several linearizable data stores whose behavior has been specified
+There are several linearizable data stores whose behaviors have been specified
 with [TLA+]:
 
 * Lamport's book [Specifying Systems][specifying-systems] uses an example of a linearizable memory in
