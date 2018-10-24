@@ -79,7 +79,7 @@ Each interval represents an operation. There are two types of operations: {E,
 D} for enqueue and dequeue. There are three processes: {A, B, C}. There are three
 items that can be added to the queue: {x, y, z}.
 
-## Definition of linearizability
+## Translating definitions into TLA+
 
 ### Linearizable history
 
