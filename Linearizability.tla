@@ -77,19 +77,6 @@ RespectsPrecedenceOrdering(H, S) ==
         Pairs(h, LT(_, _)) == {e \in ops \X ops: LT(e[1], e[2]) }
     IN Pairs(H, LTH) \subseteq Pairs(S, LTS)
 
-\* Pick a subsequence of H that matches the set of indices, inds
-Subseq(H, inds) ==
-    LET F[i \in 0..Len(H)] ==
-        IF i = 0 THEN << >>
-        ELSE IF i \in inds THEN Append(F[i-1], H[i])
-             ELSE F[i-1]
-    IN F[Len(H)]
-
-\* All subssequences of H
-\*
-\* A subsequence is a sequence that can be derived from another sequence by deleting
-\* some or no elements without changing the order of the remaining elements (Wikipedia).
-Subsequences(H) ==  {Subseq(H,s) : s \in SUBSET(1..Len(H))} 
 
 \* TRUE if history contains only invocations and matching responses
 OnlyInvAndMatchingResponses(H) == InvocationsWithoutResponses(H) = {} 
@@ -156,5 +143,5 @@ Linearize(H) ==
     IN Hp**f
 =============================================================================
 \* Modification History
-\* Last modified Mon Oct 22 19:31:33 PDT 2018 by lhochstein
+\* Last modified Tue Oct 23 18:39:25 PDT 2018 by lhochstein
 \* Created Sat Oct 20 09:56:44 PDT 2018 by lhochstein

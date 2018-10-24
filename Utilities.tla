@@ -4,6 +4,20 @@ EXTENDS Naturals, Sequences, FiniteSets, TLC
 \* Composition
 f ** g == [x \in DOMAIN(g) |-> f[g[x]]]
 
+\* Pick a subsequence of S that matches the set of indices, inds
+Subseq(S, inds) ==
+    LET F[i \in 0..Len(S)] ==
+        IF i = 0 THEN << >>
+        ELSE IF i \in inds THEN Append(F[i-1], S[i])
+             ELSE F[i-1]
+    IN F[Len(S)]
+
+\* All subssequences of S
+\*
+\* A subsequence is a sequence that can be derived from another sequence by deleting
+\* some or no elements without changing the order of the remaining elements (Wikipedia).
+Subsequences(S) ==  {Subseq(S,inds) : inds \in SUBSET(1..Len(S))} 
+
 \* Given a set, return a sequence made of its elements
 RECURSIVE ToSeq(_)
 ToSeq(S) == IF S = {} THEN << >>
@@ -41,5 +55,5 @@ Perms(S) == LET fs == Orderings(Cardinality(S))
 
 =============================================================================
 \* Modification History
-\* Last modified Mon Oct 22 20:09:54 PDT 2018 by lhochstein
+\* Last modified Tue Oct 23 18:40:06 PDT 2018 by lhochstein
 \* Created Mon Oct 22 19:21:10 PDT 2018 by lhochstein
