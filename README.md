@@ -131,6 +131,15 @@ run the model checker. The variable `S` contains the linearization:
 
 ![H3 linearization](h3.png)
 
+```
+<<
+    [op|->"E", val|->"x", proc|->"A"],
+    [op|->"Ok", proc|->"A"],
+    [op|->"D", proc|-> "B"],
+    [op|->"Ok", val|->"x", proc|->"B"]
+>>
+```
+
 ## Translating definitions into TLA+
 
 Here are some of excerpts of the TLA+ model. I tried to make the TLA+
