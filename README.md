@@ -130,8 +130,8 @@ H2 is not linearizable.
 
 ![Evaluating IsLinearizable(H2)](h2.png)
 
-For H3, we can use the `FindLinearization` algorithm for LinQueuePlusCal to
-find a linearization. We specify `linearizable = FALSE` as the invariant and
+For H3, we can use the `FindLinearization` algorithm from LinQueuePlusCal.tla to
+find a linearization. Specify `linearizable = FALSE` as the invariant and
 run the model checker. The variable `S` contains the linearization:
 
 ![H3 linearization](h3.png)
