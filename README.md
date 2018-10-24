@@ -56,12 +56,22 @@ original paper into a TLA+ model.
 * [LinQueue.tla](LinQueue.tla) instantiates the Linearizability module for
   a queue (FIFO) object. It contains an `IsLin` operator that returns true
   if an event history for a queue is linearizable.
-* [LinQueuePlusCal.tla](LinQueuePlusCal.tla) is a PlusCal version. 
+* [LinQueuePlusCal.tla](LinQueuePlusCal.tla) is a PlusCal version. If a
+  history is linearizable, using TLC with this module makes it easy to see
+  a valid linearization.
+* [Utilities.tla](Utilities.tla) conatins some general-purpose operators.
 
-## Figure 1
+## Histories
 
-Figure one shows several possible histories for a concurrently accessed queue.
-Figures 1(a) and 1(c) are linearizable, and Figures 1(b) and 1(d) are not.
+On p469, the paper defines a *linearizable object* as an object whose concurrent
+histories are linearizable with respect to some sequential specification.
+
+To understand linearizability, we need to understand what a concurrent history
+is.
+
+As a motivating example, figure one from the paper shows several possible
+histories for a concurrently accessed queue.  Figures 1(a) and 1(c) are
+linearizable, and Figures 1(b) and 1(d) are not.
 
 ![Figure 1](fig1.png)
 
@@ -69,17 +79,11 @@ Each interval represents an operation. There are two types of operations: {E,
 D} for enqueue and dequeue. There are three processes: {A, B, C}. There are three
 items that can be added to the queue: {x, y, z}.
 
-
 ## Definition of linearizability
 
-The definitions are on p469 of the paper.
-
-### Linearizable object
-
-A *linearizable object* is one whose concurrent histories are linearizable with
-respect to some sequential specification.
-
 ### Linearizable history
+
+p469:
 
 A history H is linearizable if it can be extended (by appending zero or more
 response events) to some history H’ such that:
@@ -88,4 +92,53 @@ response events) to some history H’ such that:
 * L2: <<sub>H</sub> ⊆ <<sub>S</sub>
 
 
+Here's how we model this in TLA+, going top-down:
 
+```
+IsLinearizableHistory(H) == 
+    \E Hp \in ExtendedHistories(H) : 
+       LET completeHp == Complete(Hp)
+       IN \E f \in Orderings(Len(completeHp)) :
+            LET S == completeHp ** f            
+            IN /\ IsSequential(S)               \* L1
+               /\ IsLegal(S)                    \* L1
+               /\ AreEquivalent(S, completeHp)  \* L1
+               /\ RespectsPrecedenceOrdering(H, S) \* L2
+```
+
+
+### complete(H)
+
+From p467:
+
+If H is a history, complete(H) is the maximal subsequence of H consisting only of invocations and matching responses.
+
+A subsequence is a sequence that can be derived from another sequence by
+deleting some or no elements without changing the order of the remaining
+elements (source: [Wikipedia](https://en.wikipedia.org/wiki/Subsequence))
+
+```
+Complete(H) ==
+    LET subseqs == Subsequences(H)
+    IN CHOOSE CH \in subseqs :
+        /\ OnlyInvAndMatchingResponses(CH) 
+        /\ \A s \in subseqs : OnlyInvAndMatchingResponses(s) => Len(s) <= Len(CH) \* maximal
+```
+
+### Sequential
+
+p467
+
+A history H is sequential if:
+1. The first event of H is an invocation.
+2. Each invocation, except possibly the last, is immediately followed by a
+   matching response. Each response is immediately followed by a matching
+   invocation.
+
+```
+IsSequential(H) ==
+    LET IsLastInvocation(h,i) == \A j \in 1..Len(h) : IsInvocation(h[j]) => j<=i
+    IN /\ Len(H)>0 => IsInvocation(H[1])
+       /\ \A i \in 1..Len(H) : IsInvocation(H[i]) => (IsLastInvocation(H,i) \/ Matches(H, i, i+1))
+       /\ \A i \in 1..Len(H) : IsResponse(H[i]) => Matches(H,i-1,i)
+```

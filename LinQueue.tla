@@ -15,6 +15,7 @@ PossibleResponses(e) ==
       [] e.op = "D" -> [op:{"Ok"}, proc:{e.proc}, val:Values]
 
 IsInvocation(e) == e.op \in opInvocations
+IsResponse(e) == e.op = opResponse
 
 Matches(H, i, j) ==
     /\ H[i].proc = H[j].proc

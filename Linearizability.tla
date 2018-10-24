@@ -4,6 +4,7 @@ EXTENDS Naturals, Sequences, Utilities
 
 CONSTANT PossibleResponses(_) \* Argument is a history
 CONSTANT IsInvocation(_) \* Argument is event
+CONSTANT IsResponse(_) \* Argument is event
 CONSTANT Matches(_, _, _) \* Arguments are sequence, index, index
 CONSTANT IsLegal(_)
 CONSTANT _|_
@@ -89,13 +90,16 @@ Complete(H) ==
         /\ OnlyInvAndMatchingResponses(CH) 
         /\ \A s \in subseqs : OnlyInvAndMatchingResponses(s) => Len(s) <= Len(CH) \* maximal
 
-\* Predicate to check if a history is sequential
-RECURSIVE IsSequential(_)
+\* A history H is sequential if:
+\* 1. The first event of H is an invocation.
+\* 2. Each invocation, except possibly the last, is immediately followed by a
+\*    matching response. Each response is immediately followed by a matching
+\*    invocation.
 IsSequential(H) ==
-    CASE H = << >> -> TRUE
-      [] Tail(H) = << >> -> FALSE
-      [] Matches(H,1,2) -> IsSequential(Tail(Tail(H)))
-      [] OTHER -> FALSE
+    LET IsLastInvocation(h,i) == \A j \in 1..Len(h) : IsInvocation(h[j]) => j<=i
+    IN /\ Len(H)>0 => IsInvocation(H[1])
+       /\ \A i \in 1..Len(H) : IsInvocation(H[i]) => (IsLastInvocation(H,i) \/ Matches(H, i, i+1))
+       /\ \A i \in 1..Len(H) : IsResponse(H[i]) => Matches(H,i-1,i)
 
 (***************************************************************************
 
@@ -143,5 +147,5 @@ Linearize(H) ==
     IN Hp**f
 =============================================================================
 \* Modification History
-\* Last modified Tue Oct 23 18:39:25 PDT 2018 by lhochstein
+\* Last modified Tue Oct 23 18:49:20 PDT 2018 by lhochstein
 \* Created Sat Oct 20 09:56:44 PDT 2018 by lhochstein
