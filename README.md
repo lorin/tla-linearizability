@@ -1,7 +1,9 @@
 # Reading the Herlihy & Wing Linearizability paper with TLA+
 
 This repository contains a TLA+ model for checking if an object history is
-linearizable. 
+linearizable.
+
+See also: [Reading the Herlihy & Wing Linearizability paper with TLA+, part 2: prophecy variables](https://github.com/lorin/tla-prophecy)
 
 The [Herlihy & Wing 1990](http://dx.doi.org/10.1145/78969.78972) paper entitled
 *Linearizability: a correctness condition for concurrent objects*
