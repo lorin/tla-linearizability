@@ -28,7 +28,7 @@ InvocationsWithoutResponses(H) ==
     IN {H[i] : i \in inds }
 
 \* Return a set with all of the possible sets of events that could
-\* by appended to H to extend it by completing operations
+\* be appended to H to extend it by completing operations
 Extensions(H) == 
     LET R == { PossibleResponses(inv) : inv \in InvocationsWithoutResponses(H)}
     IN Collect(R)
@@ -108,7 +108,7 @@ Herlihy & Wing 1990, p469:
 A history H is linearizable if it can be extended (by appending zero or more
 response events) to some history H’ such that:
 
-Ll: complete(H’) is equivalent to some legal sequential history S, and
+L1: complete(H’) is equivalent to some legal sequential history S, and
 L2: <_H ⊆ <_S
 
 Two histories H and H’ are equivalent if for every process P, H|P = H’|P.
