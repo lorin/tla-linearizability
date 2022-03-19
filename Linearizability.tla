@@ -39,9 +39,8 @@ Extensions(H) ==
 ExtendedHistories(H) == 
     LET Ps(s) == UNION({Perms(x) : x \in SUBSET(s)})
         ExtHistory(s) == { H \o ext : ext \in Ps(s) }
-    IN UNION({ExtHistory(s) : s \in Extensions(H)})
-
-
+    IN UNION({ExtHistory(s) : s \in Extensions(H)}) 
+            \cup IF Extensions(H) = {{}} THEN {H} ELSE {}
 
 \* Two histories H and H’ are equivalent if for every process P, H|P = H’|P.
 AreEquivalent(H1,H2) == \A p \in Processes : H1|p = H2|p
